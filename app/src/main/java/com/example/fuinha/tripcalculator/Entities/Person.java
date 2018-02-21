@@ -29,7 +29,7 @@ public class Person {
     }
 
     public BigDecimal getAmountDue() {
-        return getPayedTotal().subtract(getDebtTotal());
+        return getDebtTotal().subtract(getPayedTotal());
     }
 
     public Person(String name) {

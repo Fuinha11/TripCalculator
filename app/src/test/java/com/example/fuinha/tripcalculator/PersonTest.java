@@ -47,6 +47,6 @@ public class PersonTest {
         person.getKitties().get(0).getTransactions().add(transaction);
         assertEquals(new BigDecimal(25), person.getPayedTotal());
         assertEquals(new BigDecimal(105), person.getDebtTotal());
-        assertEquals(new BigDecimal(-80), person.getAmountDue());
+        assertEquals(new BigDecimal(80), person.getAmountDue());
     }
 }
