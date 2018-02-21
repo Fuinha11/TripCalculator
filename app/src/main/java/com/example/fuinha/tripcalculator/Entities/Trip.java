@@ -4,6 +4,8 @@ import com.example.fuinha.tripcalculator.Entities.DataEntities.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -66,8 +68,20 @@ public class Trip {
                 receivers.add(p);
         }
 
-        // TODO: 21/02/2018 sort lists
-        solved.clear();
+        Collections.sort(payers, new Comparator<PayingPerson>() {
+            @Override
+            public int compare(PayingPerson o1, PayingPerson o2) {
+                return o2.hasToPay().compareTo(o1.hasToPay());
+            }
+        });
+
+        Collections.sort(receivers, new Comparator<PayingPerson>() {
+            @Override
+            public int compare(PayingPerson o1, PayingPerson o2) {
+                return o2.hasToReceive().compareTo(o1.hasToReceive());
+            }
+        });
+
         for (PayingPerson receiver : receivers){
             for (PayingPerson payer : payers){
                 BigDecimal toReceive = receiver.hasToReceive();
