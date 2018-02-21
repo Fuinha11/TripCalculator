@@ -18,6 +18,14 @@ import static org.junit.Assert.assertEquals;
 public class TripTest {
     private Trip trip;
 
+    @Test
+    public void performTests(){
+        getNextIdTest();
+        crudPerson();
+        crudKitty();
+        crudTransaction();
+    }
+
     private void populate(){
         trip = new Trip("test_trip");
 
@@ -35,7 +43,7 @@ public class TripTest {
     }
 
     @Test
-    public void getNextIdTest() throws Exception {
+    public void getNextIdTest(){
         Trip trip = new Trip("test");
         Long zero = trip.getNextId();
         Long one = trip.getNextId();

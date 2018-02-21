@@ -17,6 +17,11 @@ import static org.junit.Assert.assertEquals;
 public class KittyTest {
     private Kitty kitty;
 
+    @Test
+    public void performTests(){
+        valuesTest();
+    }
+
     private void populate(){
         kitty = new Kitty(69L, "test_kitty");
         for (int i = 0; i < 5; i++) {

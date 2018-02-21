@@ -18,6 +18,11 @@ import static org.junit.Assert.assertEquals;
 public class PersonTest {
     private Person person;
 
+    @Test
+    public void performTests(){
+        valuesTest();
+    }
+
     private void populate(){
         person = new Person(69L, "test_user");
         ArrayList<Kitty> kitties = new ArrayList<>();
