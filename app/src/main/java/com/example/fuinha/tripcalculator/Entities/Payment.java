@@ -43,4 +43,11 @@ public class Payment {
         this.amount = amount;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("amount: ").append(amount)
+                .append(", from: ").append(from.getPersonId())
+                .append(", to: ").append(to.getPersonId()).toString();
+    }
 }

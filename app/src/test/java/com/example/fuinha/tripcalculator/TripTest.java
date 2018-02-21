@@ -1,6 +1,7 @@
 package com.example.fuinha.tripcalculator;
 
 import com.example.fuinha.tripcalculator.Entities.Kitty;
+import com.example.fuinha.tripcalculator.Entities.PayingPerson;
 import com.example.fuinha.tripcalculator.Entities.Person;
 import com.example.fuinha.tripcalculator.Entities.Transaction;
 import com.example.fuinha.tripcalculator.Entities.Trip;
@@ -8,7 +9,9 @@ import com.example.fuinha.tripcalculator.Entities.Trip;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,21 +31,30 @@ public class TripTest {
         getAllTransactionsTest();
         deleteTransactionsFromPerson();
         deleteTransactionsFromKitty();
+        valuesTest();
+        getPaymentsTest();
     }
 
     private void populate(){
         trip = new Trip("test_trip");
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < (new Random().nextInt(100) + 1); i++) {
             Person user = new Person("user" + i);
             trip.createPerson(user);
+
             Kitty kitty = new Kitty(0L, "kitty" + i);
             kitty.getPeople().add(user);
+            for (int j = 0; j < new Random().nextInt(45); j++) {
+                Person otherUser = trip.getSomeone();
+                if (!kitty.getPeople().contains(otherUser))
+                    kitty.getPeople().add(otherUser);
+            }
             trip.createKitty(kitty);
-            Transaction transaction = new Transaction(user, kitty, new BigDecimal(60 + i));
-            trip.createTransaction(transaction);
-            trip.createTransaction(transaction);
-            trip.createTransaction(transaction);
+
+            for (int j = 0; j < new Random().nextInt(42); j++) {
+                Transaction transaction = new Transaction(kitty.getSomeone(), kitty, new BigDecimal(60 + j));
+                trip.createTransaction(transaction);
+            }
         }
     }
 
@@ -150,7 +162,9 @@ public class TripTest {
             transactions.addAll(p.getTransactions());
         }
 
-        assertEquals(transactions, trip.getAllTransactions());
+        ArrayList<Transaction> tripTransactions = trip.getAllTransactions();
+
+        assertEquals(transactions.size(), tripTransactions.size());
     }
 
     @Test
@@ -177,5 +191,75 @@ public class TripTest {
         for (Transaction t : kittyTransactions){
             assertEquals(false, trip.getAllTransactions().contains(t));
         }
+    }
+
+    @Test
+    public void valuesTest(){
+        populate();
+        BigDecimal allPayments = new BigDecimal(0);
+        allPayments = allPayments.setScale(2, RoundingMode.DOWN);
+
+        for (Transaction t : trip.getAllTransactions()){
+            allPayments = allPayments.add(t.getValue());
+        }
+
+        BigDecimal allKitties = new BigDecimal(0);
+        allKitties = allKitties.setScale(2, RoundingMode.DOWN);
+        BigDecimal allKittiesPP = new BigDecimal(0);
+        allKittiesPP = allKittiesPP.setScale(2, RoundingMode.DOWN);
+        for (Kitty k : trip.getAllKitties()){
+            allKitties = allKitties.add(k.getTotal());
+            allKittiesPP = allKittiesPP.add(k.getTotalPerPerson().multiply(new BigDecimal(k.getNumOfPeople())));
+        }
+
+        BigDecimal allPeopleDebt = new BigDecimal(0);
+        allPeopleDebt = allPeopleDebt.setScale(2, RoundingMode.DOWN);
+        BigDecimal allPeoplePayed = new BigDecimal(0);
+        allPeoplePayed = allPeoplePayed.setScale(2, RoundingMode.DOWN);
+        BigDecimal allPeopleDue = new BigDecimal(0);
+        allPeopleDue = allPeopleDue.setScale(2, RoundingMode.DOWN);
+        for (Person p : trip.getEveryone()){
+            p = trip.getCompletePerson(p.getPersonId());
+            allPeopleDebt = allPeopleDebt.add(p.getDebtTotal());
+            allPeoplePayed = allPeoplePayed.add(p.getPayedTotal());
+            allPeopleDue = allPeopleDue.add(p.getAmountDue());
+        }
+
+
+        assertEquals(allKitties.floatValue(), allKittiesPP.floatValue(), 1.0f);
+        assertEquals(allPeopleDebt.floatValue(), allPeoplePayed.floatValue(), 1.0f);
+        assertEquals(allPeoplePayed.floatValue(), allPayments.floatValue(), 1.0f);
+        assertEquals(allKitties.floatValue(), allPayments.floatValue(), 1.0f);
+        assertEquals(0f, allPeopleDue.floatValue(), 1.0f);
+    }
+
+    @Test
+    public void getPaymentsTest(){
+        populate();
+        ArrayList<PayingPerson> people =  trip.getFinalPayments();
+        BigDecimal hasToPay = new BigDecimal(0);
+        BigDecimal hasToReceive = new BigDecimal(0);
+        BigDecimal willPay = new BigDecimal(0);
+        BigDecimal willPayAbs = new BigDecimal(0);
+
+        for (PayingPerson p : people){
+            hasToPay = hasToPay.add(p.hasToPay());
+            hasToReceive = hasToReceive.add(p.hasToReceive());
+            willPay = willPay.add(p.willPay());
+            willPayAbs = willPayAbs.add(p.willPay().abs());
+        }
+
+        BigDecimal allPeopleDueAbs = new BigDecimal(0);
+        allPeopleDueAbs = allPeopleDueAbs.setScale(2, RoundingMode.DOWN);
+
+        for (Person p : trip.getEveryone()){
+            p = trip.getCompletePerson(p.getPersonId());
+            allPeopleDueAbs = allPeopleDueAbs.add(p.getAmountDue().abs());
+        }
+
+        assertEquals(new BigDecimal(0).floatValue(), hasToPay.floatValue(), 1.0);
+        assertEquals(new BigDecimal(0).floatValue(), hasToReceive.floatValue(), 1.0);
+        assertEquals(new BigDecimal(0).floatValue(), willPay.floatValue(), 1.0);
+        assertEquals(allPeopleDueAbs.floatValue(), willPayAbs.floatValue(), 1.0);
     }
 }

@@ -86,4 +86,10 @@ public class Person {
     public boolean equals(Object obj) {
         return obj instanceof Person && ((Person) obj).personId == this.personId;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("id: ").append(personId)
+                .append(", name: ").append(name).toString();
+    }
 }

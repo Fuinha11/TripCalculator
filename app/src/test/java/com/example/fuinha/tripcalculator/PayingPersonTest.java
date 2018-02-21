@@ -2,7 +2,6 @@ package com.example.fuinha.tripcalculator;
 
 import com.example.fuinha.tripcalculator.Entities.Kitty;
 import com.example.fuinha.tripcalculator.Entities.PayingPerson;
-import com.example.fuinha.tripcalculator.Entities.Payment;
 import com.example.fuinha.tripcalculator.Entities.Person;
 import com.example.fuinha.tripcalculator.Entities.Transaction;
 
@@ -74,11 +73,11 @@ public class PayingPersonTest {
     @Test
     public void generateValuesTest(){
         populate();
-        assertEquals(new BigDecimal(0), payer.hasToReceive());
-        assertEquals(new BigDecimal(80), payer.hasToPay());
+        assertEquals(new BigDecimal(0).floatValue(), payer.hasToReceive().floatValue(), 0.0);
+        assertEquals(new BigDecimal(80).floatValue(), payer.hasToPay().floatValue(),0.0);
 
-        assertEquals(new BigDecimal(140), receiver.hasToReceive());
-        assertEquals(new BigDecimal(0), receiver.hasToPay());
+        assertEquals(new BigDecimal(140).floatValue(), receiver.hasToReceive().floatValue(),0.0);
+        assertEquals(new BigDecimal(0).floatValue(), receiver.hasToPay().floatValue(),0.0);
     }
 
     @Test
@@ -87,11 +86,33 @@ public class PayingPersonTest {
         Person other = new Person(0L, "other_person");
 
         payer.pay(other, new BigDecimal(30.50));
-        assertEquals(new BigDecimal(0), payer.hasToReceive());
-        assertEquals(new BigDecimal(49.50), payer.hasToPay());
+        assertEquals(new BigDecimal(0).floatValue(), payer.hasToReceive().floatValue(),0.0);
+        assertEquals(new BigDecimal(49.50).floatValue(), payer.hasToPay().floatValue(),0.0);
 
         receiver.receive(other, new BigDecimal(40));
-        assertEquals(new BigDecimal(100), receiver.hasToReceive());
-        assertEquals(new BigDecimal(0), receiver.hasToPay());
+        assertEquals(new BigDecimal(100).floatValue(), receiver.hasToReceive().floatValue(),0.0);
+        assertEquals(new BigDecimal(0).floatValue(), receiver.hasToPay().floatValue(),0.0);
+    }
+
+    @Test
+    public void getPayingTotalTest(){
+        generateValuesTest();
+        assertEquals(new BigDecimal(0).floatValue(), payer.willPay().floatValue(), 0.01);
+
+        Person other = new Person(0L, "other_person");
+        payer.pay(other, new BigDecimal(10.10));
+        payer.pay(other, new BigDecimal(10.10));
+        payer.pay(other, new BigDecimal(10.10));
+        assertEquals(new BigDecimal(30.30).floatValue(), payer.willPay().floatValue(), 0.01);
+
+        payer.receive(other, new BigDecimal(10.10));
+        payer.receive(other, new BigDecimal(10.10));
+        payer.receive(other, new BigDecimal(10.10));
+        assertEquals(new BigDecimal(0).floatValue(), payer.willPay().floatValue(), 0.01);
+
+        payer.receive(other, new BigDecimal(10.10));
+        payer.receive(other, new BigDecimal(10.10));
+        payer.receive(other, new BigDecimal(10.10));
+        assertEquals(new BigDecimal(-30.30).floatValue(), payer.willPay().floatValue(), 0.01);
     }
 }

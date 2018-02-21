@@ -42,8 +42,8 @@ public class KittyTest {
         kitty.getTransactions().add(newTransaction);
         kitty.getTransactions().add(newTransaction);
 
-        assertEquals(new BigDecimal(50), kitty.getTotal());
-        assertEquals(new BigDecimal(10), kitty.getTotalPerPerson());
-        assertEquals(new BigDecimal(30), kitty.getPayedAmount(person));
+        assertEquals(new BigDecimal(50).floatValue(), kitty.getTotal().floatValue(), 0.0);
+        assertEquals(new BigDecimal(10).floatValue(), kitty.getTotalPerPerson().floatValue(), 0.0);
+        assertEquals(new BigDecimal(30).floatValue(), kitty.getPayedAmount(person).floatValue(), 0.0);
     }
 }

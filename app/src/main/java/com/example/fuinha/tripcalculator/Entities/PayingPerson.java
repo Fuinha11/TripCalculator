@@ -1,6 +1,7 @@
 package com.example.fuinha.tripcalculator.Entities;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 /**
@@ -36,7 +37,7 @@ public class PayingPerson {
             if (pay.getTo().equals(person))
                 result = result.subtract(pay.getAmount());
         }
-        return result;
+        return result.setScale(2, RoundingMode.DOWN);
     }
 
     public BigDecimal hasToPay(){
@@ -45,11 +46,26 @@ public class PayingPerson {
             if (pay.getFrom().equals(person))
                 result = result.subtract(pay.getAmount());
         }
-        return result;
+        return result.setScale(2, RoundingMode.DOWN);
     }
 
     public Person getPerson() {
         return person;
+    }
+
+    public ArrayList<Payment> getPayments() {
+        return payments;
+    }
+
+    public BigDecimal willPay() {
+        BigDecimal result = new BigDecimal(0);
+        for (Payment p : payments){
+            if (p.getTo().equals(person))
+                result = result.subtract(p.getAmount());
+            else
+                result = result.add(p.getAmount());
+        }
+        return result;
     }
 
     public void pay(Person to, BigDecimal amount){
@@ -58,5 +74,17 @@ public class PayingPerson {
 
     public void receive(Person from, BigDecimal amount){
         payments.add(new Payment(from, person, amount));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof PayingPerson && ((PayingPerson) obj).getPerson().equals(person);
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("person: ").append(person.getPersonId())
+                .append(", hasToPay: ").append(hasToPay)
+                .append(", hasToReceive: ").append(hasToReceive).toString();
     }
 }

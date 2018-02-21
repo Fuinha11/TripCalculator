@@ -19,6 +19,7 @@ public class TestHandler {
         new PersonTest().performTests();
         new TripTest().performTests();
         new PayingPersonTest().performTests();
+        new PayingPersonTest().performTests();
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.fuinha.tripcalculator.Entities;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Fuinha on 20/02/2018.
@@ -23,7 +24,7 @@ public class Kitty {
 
     public BigDecimal getTotalPerPerson(){
         BigDecimal result = getTotal();
-        return result.divide(BigDecimal.valueOf(getNumOfPeople()));
+        return result.divide(BigDecimal.valueOf(getNumOfPeople()), 2, BigDecimal.ROUND_UP);
     }
 
     public BigDecimal getPayedAmount(Person person){
@@ -33,6 +34,17 @@ public class Kitty {
                 result = result.add(t.getValue());
         }
         return result;
+    }
+
+    public Person getSomeone() {
+        if (people.size() == 0)
+            return null;
+        else if (people.size() == 1)
+            return people.get(0);
+        else {
+            int index = new Random().nextInt(people.size() - 1);
+            return people.get(index);
+        }
     }
 
     public int getNumOfPeople(){

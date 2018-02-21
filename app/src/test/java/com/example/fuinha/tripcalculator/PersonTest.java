@@ -46,9 +46,9 @@ public class PersonTest {
         populate();
         Transaction transaction = new Transaction(person, person.getKitties().get(0), new BigDecimal(25));
         person.getKitties().get(0).getTransactions().add(transaction);
-        assertEquals(new BigDecimal(25), person.getPayedTotal());
-        assertEquals(new BigDecimal(105), person.getDebtTotal());
-        assertEquals(new BigDecimal(80), person.getAmountDue());
+        assertEquals(new BigDecimal(25).floatValue(), person.getPayedTotal().floatValue(),0.0);
+        assertEquals(new BigDecimal(105).floatValue(), person.getDebtTotal().floatValue(),0.0);
+        assertEquals(new BigDecimal(80).floatValue(), person.getAmountDue().floatValue(),0.0);
     }
 
     @Test

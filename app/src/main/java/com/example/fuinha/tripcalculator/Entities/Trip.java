@@ -2,6 +2,7 @@ package com.example.fuinha.tripcalculator.Entities;
 
 import com.example.fuinha.tripcalculator.Entities.DataEntities.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -19,10 +20,6 @@ public class Trip {
 
     private Long nextId;
 
-    public Long getNextId() {
-        return nextId++;
-    }
-
     public Trip(String tripName) {
         this.tripName = tripName;
         this.tripId = 42L;
@@ -37,18 +34,69 @@ public class Trip {
      * Utility methods
      * */
 
+    public Long getNextId() {
+        return nextId++;
+    }
+
     public Person getSomeone() {
-        int index = new Random().nextInt(people.size() - 1);
-        return getCompletePerson(people.get(index).getPersonId());
+        if (people.size() == 0)
+            return null;
+        else if (people.size() == 1)
+            return getCompletePerson(people.get(0).getPersonId());
+        else {
+            int index = new Random().nextInt(people.size() - 1);
+            return getCompletePerson(people.get(index).getPersonId());
+        }
     }
 
     public ArrayList<PayingPerson> getFinalPayments() {
+        ArrayList<PayingPerson> solved = new ArrayList<>();
         ArrayList<PayingPerson> everyone = new ArrayList<>();
 
         for (DataPerson p : people){
             everyone.add(new PayingPerson(getCompletePerson(p.getPersonId())));
         }
 
+        ArrayList<PayingPerson> payers = new ArrayList<>();
+        ArrayList<PayingPerson> receivers = new ArrayList<>();
+        for (PayingPerson p : everyone){
+            if (p.hasToPay().compareTo(BigDecimal.ZERO) > 0)
+                payers.add(p);
+            else
+                receivers.add(p);
+        }
+
+        // TODO: 21/02/2018 sort lists
+        solved.clear();
+        for (PayingPerson receiver : receivers){
+            for (PayingPerson payer : payers){
+                BigDecimal toReceive = receiver.hasToReceive();
+                BigDecimal toPay = payer.hasToPay();
+                if (toReceive.compareTo(toPay) >= 0) {
+                    receiver.receive(payer.getPerson(),toPay);
+                    payer.pay(receiver.getPerson(), toPay);
+                    if (payer.hasToPay().compareTo(BigDecimal.ZERO) == 0)
+                        solved.add(payer);
+                }
+            }
+            payers.removeAll(solved);
+            if (receiver.hasToReceive().compareTo(BigDecimal.ZERO) > 0){
+                for (PayingPerson payer : payers){
+                    BigDecimal toReceive = receiver.hasToReceive();
+                    BigDecimal toPay = payer.hasToPay();
+                    if (toPay.compareTo(toReceive) >= 0) {
+                        receiver.receive(payer.getPerson(), toReceive);
+                        payer.pay(receiver.getPerson(), toReceive);
+                        if (payer.hasToPay().compareTo(BigDecimal.ZERO) == 0)
+                            solved.add(payer);
+                        break;
+                    }
+                }
+            }
+            payers.removeAll(solved);
+            if (receiver.hasToReceive().compareTo(BigDecimal.ZERO) == 0)
+                solved.add(receiver);
+        }
 
         return everyone;
     }

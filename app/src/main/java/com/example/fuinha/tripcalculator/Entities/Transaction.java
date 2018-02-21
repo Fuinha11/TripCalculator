@@ -63,4 +63,12 @@ public class Transaction {
     public boolean equals(Object obj) {
         return obj instanceof Transaction && ((Transaction) obj).transactionId == this.transactionId;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("id: ").append(transactionId)
+                .append(", payer: ").append(payer.getPersonId())
+                .append(", kitty: ").append(kitty.getKittyId())
+                .append(", amount: ").append(value).toString();
+    }
 }
