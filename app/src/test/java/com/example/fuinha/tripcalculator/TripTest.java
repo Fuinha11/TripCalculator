@@ -8,6 +8,7 @@ import com.example.fuinha.tripcalculator.Entities.Trip;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,6 +25,9 @@ public class TripTest {
         crudPerson();
         crudKitty();
         crudTransaction();
+        getAllTransactionsTest();
+        deleteTransactionsFromPerson();
+        deleteTransactionsFromKitty();
     }
 
     private void populate(){
@@ -131,5 +135,47 @@ public class TripTest {
         trip.deleteTransaction(transaction);
         newTransaction = trip.getCrudeTransaction(transaction.getTransactionId());
         assertEquals(null, newTransaction);
+    }
+
+    @Test
+    public void getAllTransactionsTest(){
+        populate();
+        ArrayList<Person> everyone = new ArrayList<>();
+        for (Person p : trip.getEveryone()){
+            everyone.add(trip.getCompletePerson(p.getPersonId()));
+        }
+
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        for (Person p : everyone){
+            transactions.addAll(p.getTransactions());
+        }
+
+        assertEquals(transactions, trip.getAllTransactions());
+    }
+
+    @Test
+    public void deleteTransactionsFromPerson(){
+        populate();
+        Person dude = trip.getCompletePerson(0L);
+        // Dude have 1 kitty with 3 transactions in it;
+        ArrayList<Transaction> dudeTransactions = dude.getTransactions();
+        trip.deletePerson(dude);
+
+        for (Transaction t : dudeTransactions){
+            assertEquals(false, trip.getAllTransactions().contains(t));
+        }
+    }
+
+    @Test
+    public void deleteTransactionsFromKitty(){
+        populate();
+        Kitty kitty = trip.getAllKitties().get(0);
+        // Kitty have 3 transactions in it;
+        ArrayList<Transaction> kittyTransactions = kitty.getTransactions();
+        trip.deleteKitty(kitty);
+
+        for (Transaction t : kittyTransactions){
+            assertEquals(false, trip.getAllTransactions().contains(t));
+        }
     }
 }

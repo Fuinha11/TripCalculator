@@ -21,6 +21,7 @@ public class PersonTest {
     @Test
     public void performTests(){
         valuesTest();
+        getTransactionsTest();
     }
 
     private void populate(){
@@ -48,5 +49,41 @@ public class PersonTest {
         assertEquals(new BigDecimal(25), person.getPayedTotal());
         assertEquals(new BigDecimal(105), person.getDebtTotal());
         assertEquals(new BigDecimal(80), person.getAmountDue());
+    }
+
+    @Test
+    public void getTransactionsTest(){
+        populate();
+        ArrayList<Transaction> transactions = person.getTransactions();
+        //Person has no Transactions so far
+        assertEquals(0, transactions.size());
+
+        Kitty kitty = person.getKitties().get(0);
+        Transaction transaction = new Transaction(0L, person, kitty, new BigDecimal(50));
+        kitty.getTransactions().add(transaction);
+        transactions.add(transaction);
+        transaction = new Transaction(1L, person, kitty, new BigDecimal(50));
+        kitty.getTransactions().add(transaction);
+        transactions.add(transaction);
+        transaction = new Transaction(2L, person, kitty, new BigDecimal(50));
+        kitty.getTransactions().add(transaction);
+        transactions.add(transaction);
+        //Person has now 3 transactions
+
+        assertEquals(transactions, person.getTransactions());
+
+        kitty = person.getKitties().get(1);
+        transaction = new Transaction(0L, person, kitty, new BigDecimal(50));
+        kitty.getTransactions().add(transaction);
+        transactions.add(transaction);
+        transaction = new Transaction(1L, person, kitty, new BigDecimal(50));
+        kitty.getTransactions().add(transaction);
+        transactions.add(transaction);
+        transaction = new Transaction(2L, person, kitty, new BigDecimal(50));
+        kitty.getTransactions().add(transaction);
+        transactions.add(transaction);
+        //Person has now 6 transactions in 2 kitties
+
+        assertEquals(transactions, person.getTransactions());
     }
 }

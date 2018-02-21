@@ -18,6 +18,7 @@ public class TestHandler {
         new KittyTest().performTests();
         new PersonTest().performTests();
         new TripTest().performTests();
+        new PayingPersonTest().performTests();
     }
 
 }

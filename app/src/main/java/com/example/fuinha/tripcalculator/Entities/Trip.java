@@ -42,7 +42,16 @@ public class Trip {
         return getCompletePerson(people.get(index).getPersonId());
     }
 
+    public ArrayList<PayingPerson> getFinalPayments() {
+        ArrayList<PayingPerson> everyone = new ArrayList<>();
 
+        for (DataPerson p : people){
+            everyone.add(new PayingPerson(getCompletePerson(p.getPersonId())));
+        }
+
+
+        return everyone;
+    }
 
 
     /**
@@ -209,7 +218,7 @@ public class Trip {
     public ArrayList<Kitty> getAllKitties(){
         ArrayList<Kitty> result = new ArrayList<>();
         for (DataKitty data:kitties){
-            result.add(getCrudeKitty(data.getKittyId()));
+            result.add(getCompleteKitty(data.getKittyId()));
         }
         return result;
     }

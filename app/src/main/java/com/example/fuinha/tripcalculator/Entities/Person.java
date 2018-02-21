@@ -68,6 +68,20 @@ public class Person {
         return this;
     }
 
+    public ArrayList<Transaction> getTransactions(){
+        ArrayList<Transaction> result = new ArrayList<>();
+        ArrayList<Kitty> list = getKitties();
+
+        for (Kitty k : list){
+            for (Transaction t : k.getTransactions()){
+                if (t.getPayer().equals(this))
+                    result.add(t);
+            }
+        }
+
+        return result;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Person && ((Person) obj).personId == this.personId;
