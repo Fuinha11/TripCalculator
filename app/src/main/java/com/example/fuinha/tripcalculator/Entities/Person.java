@@ -12,10 +12,10 @@ public class Person {
     private String name;
     private ArrayList<Kitty> kitties = new ArrayList<>();
 
-    public BigDecimal getPayedTotal(){
+    public BigDecimal getPaidTotal(){
         BigDecimal result = new BigDecimal(0);
         for (Kitty k:kitties){
-            result = result.add(k.getPayedAmount(this));
+            result = result.add(k.getPaidAmount(this));
         }
         return result;
     }
@@ -29,7 +29,7 @@ public class Person {
     }
 
     public BigDecimal getAmountDue() {
-        return getDebtTotal().subtract(getPayedTotal());
+        return getDebtTotal().subtract(getPaidTotal());
     }
 
     public Person(String name) {

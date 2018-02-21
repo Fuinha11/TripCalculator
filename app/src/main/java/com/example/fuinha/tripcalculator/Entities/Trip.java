@@ -115,7 +115,6 @@ public class Trip {
         return everyone;
     }
 
-
     /**
      * Person CRUD
      * */

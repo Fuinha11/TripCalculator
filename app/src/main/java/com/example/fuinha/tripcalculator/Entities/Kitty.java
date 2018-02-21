@@ -27,7 +27,7 @@ public class Kitty {
         return result.divide(BigDecimal.valueOf(getNumOfPeople()), 2, BigDecimal.ROUND_UP);
     }
 
-    public BigDecimal getPayedAmount(Person person){
+    public BigDecimal getPaidAmount(Person person){
         BigDecimal result = new BigDecimal(0);
         for (Transaction t:transactions){
             if (t.getPayer().equals(person))
@@ -45,6 +45,40 @@ public class Kitty {
             int index = new Random().nextInt(people.size() - 1);
             return people.get(index);
         }
+    }
+
+    public Person getPaidMost() {
+        Person result = getSomeone();
+        BigDecimal sum = new BigDecimal(0);
+        for (Person p : people){
+            BigDecimal newSum = new BigDecimal(0);
+            for (Transaction t : transactions){
+                if (t.getPayer().equals(p))
+                    newSum = newSum.add(t.getValue());
+            }
+            if (newSum.compareTo(sum) > 0) {
+                sum = newSum;
+                result = p;
+            }
+        }
+        return result;
+    }
+
+    public Person getPaidLess() {
+        Person result = getSomeone();
+        BigDecimal sum = new BigDecimal(10000);
+        for (Person p : people){
+            BigDecimal newSum = new BigDecimal(0);
+            for (Transaction t : transactions){
+                if (t.getPayer().equals(p))
+                    newSum = newSum.add(t.getValue());
+            }
+            if (newSum.compareTo(sum) < 0) {
+                sum = newSum;
+                result = p;
+            }
+        }
+        return result;
     }
 
     public int getNumOfPeople(){

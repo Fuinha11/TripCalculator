@@ -221,7 +221,7 @@ public class TripTest {
         for (Person p : trip.getEveryone()){
             p = trip.getCompletePerson(p.getPersonId());
             allPeopleDebt = allPeopleDebt.add(p.getDebtTotal());
-            allPeoplePayed = allPeoplePayed.add(p.getPayedTotal());
+            allPeoplePayed = allPeoplePayed.add(p.getPaidTotal());
             allPeopleDue = allPeopleDue.add(p.getAmountDue());
         }
 
